@@ -10,7 +10,7 @@ import { connectionOptions } from './orm-config';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => config.get(process.env.NODE_ENV),
+      useFactory: (config: ConfigService) => config.get('production'),
       inject: [ConfigService],
     }),
   ],
