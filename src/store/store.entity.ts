@@ -1,28 +1,39 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { StoreType } from 'src/app.service';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { Location } from './location';
 
-@Entity({ name: 'tbl_store' })
+@Entity()
 export class Store {
-  @PrimaryGeneratedColumn()
+  @ObjectIdColumn()
   id: number;
 
   @Column()
-  storeName: string;
+  title: string;
 
   @Column()
   category: string;
 
-  @Column({ length: 512 })
-  description: string;
-
-  @Column()
-  telephone: string;
-
-  @Column({ length: 512 })
+  @Column({ length: 512, unique: true })
   address: string;
 
-  @Column()
-  mapx: number;
+  @Column({ type: 'point' })
+  location: Location; 
 
   @Column()
-  mapy: number;
+  x: number;
+
+  @Column()
+  y: number;
+
+  static create(store: StoreType) {
+    const storeEntity = new Store();
+    storeEntity.id = Number(store.id);
+    storeEntity.title = store.title;
+    storeEntity.category = store.category;
+    storeEntity.address = store.address;
+    storeEntity.x = Number(store.x);
+    storeEntity.y = Number(store.y);
+    storeEntity.location = new Location("Point", [Number(store.x), Number(store.y)])
+    return storeEntity;
+  }
 }
