@@ -25,39 +25,34 @@ export class AppService {
       });
   }
 
-  async queryStore(lon: number, lat: number, distance: number, category: string) {
-    const repostiory = getMongoRepository(Store);
-    return await repostiory.find({
-      where: {
-        $and: [
-          {
-            location: {
-              $geoWithin: {
-                $centerSphere: [[Number(lon), Number(lat)], Number(distance) / 6378.1],
+  async queryStore(
+    lon: number,
+    lat: number,
+    distance: number,
+    category: string,
+  ) {
+    return await this.storeRepository
+      .find({
+        where: {
+          $and: [
+            {
+              location: {
+                $geoWithin: {
+                  $centerSphere: [
+                    [Number(lon), Number(lat)],
+                    Number(distance) / 6378.1,
+                  ],
+                },
               },
             },
-          },
-          {
-            category: new RegExp(`^${category}`)
-          }
-        ],
-      },
-    }).catch((err) => {
-      throw new BadRequestException('Parameter Value Not Found')
-    });
+            {
+              category: new RegExp(`^${category}`),
+            },
+          ],
+        },
+      })
+      .catch((err) => {
+        throw new BadRequestException('Parameter Value Not Found');
+      });
   }
-
-  // where: {
-  //   $and: [
-  //     {
-  //       locationIndex: {$geoWithin: {$centerSphere: [[126.9682994, 37.5572500], 3.3396 / 6378.1]}}
-  //     }
-  //   ]
-  // }
-
-  // location: {
-  //   $geoWithin: {
-  //     $centerSphere: [[lon, lat], 100 / 6378.1], //km 단위
-  //   },
-  // },
 }
